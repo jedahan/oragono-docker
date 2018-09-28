@@ -6,13 +6,15 @@ A much smaller image for oragono, based on alpine linux
 
 Expects you to have a `config` folder with ircd.yaml setup
 
-    docker run \
+    docker create \
       --name oragono \
-      -p 6667:6667/tcp \
-      -p 6697:6697/tcp \
-      -v ./config:/config \
-      --restart-on failure \
+      --publish 6667:6667/tcp \
+      --publish 6697:6697/tcp \
+      --volume $PWD/config:/config \
+      --restart on-failure \
       jedahan/oragono:latest
+
+    docker start oragono
 
 ## building
 
@@ -20,20 +22,22 @@ If you want to build from scratch, or need a fresh config:
 
 build the builder
 
-    docker build --target builder --tag jedahan/oragono:latest .
+    docker build --tag jedahan/oragono:latest .
 
 copy and edit the config files to a new directory
 
     mkdir config
-    docker run --rm jedahan/oragono:version tar -c -C /config . | tar -x -C config
+    docker run --rm jedahan/oragono:latest tar -c -C /config . | tar -x -C config
     edit config/*
 
 run the container
 
-    docker run \
+    docker create \
       --name oragono \
-      -p 6667:6667/tcp \
-      -p 6697:6697/tcp \
-      -v ./config:/config \
-      --restart-on failure \
+      --publish 6667:6667/tcp \
+      --publish 6697:6697/tcp \
+      --volume $PWD/config:/config \
+      --restart on-failure \
       jedahan/oragono:latest
+
+    docker start oragono
